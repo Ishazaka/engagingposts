@@ -16,39 +16,46 @@ let namePerson =  document.getElementById("name-input")
 
 })
 
-
 // button's click event listener
-scrapeEmails.addEventListener("click" , async function(){
-  
-    // get current active tab
-    let [tab] = await  chrome.tabs.query({
-        active:true, currentWindow:true
+scrapeEmails.addEventListener("click", async function () {
+
+   // get current active tab
+   let [tab] = await chrome.tabs.query({
+      active: true, currentWindow: true
+   });
+
+   // execute script to parse email on page
+   chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: scrapingemailfromweb,
+   });
+
+   async function scrapingemailfromweb() {
+      const gettingpost = document.getElementsByClassName("update-components-text ")[0].getElementsByTagName("span")[0].getElementsByTagName("span")[0].getElementsByTagName("span")[0].innerText;
+      const gettingName = document.getElementsByClassName("update-components-actor__name")[0].getElementsByTagName("span")[0].getElementsByTagName("span")[0].innerText;
+
+      // Clean up the text
+      let cleanedPost = gettingpost.replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, " ");
+
+      // Send data to server
+      const response = await fetch('http://localhost:4000/gpt', {
+         method: 'POST',
+         headers: {
+            'Content-Type': 'application/json'
+         },
+         body: JSON.stringify({ prompt: `Be a LinkedIn user who makes a joke in response to the following LinkedIn post, has to be 14 lines. ${cleanedPost}` })
       });
 
+      const data = await response.json();
 
-    //   excute script to parse email on page
-     chrome.scripting.executeScript({
-        target: {tabId : tab.id},
-        func: scrapingemailfromweb,
-     })      
+      console.log("resopnse", response);
 
-     function scrapingemailfromweb(){
+      // log data to the console
+      console.log('getting data', data.response);
+      console.log('cleaned post', cleanedPost);
 
-       
-    
-  const gettingpost   = document.getElementsByClassName("update-components-text ")[0].getElementsByTagName("span")[0].getElementsByTagName("span")[0].getElementsByTagName("span")[0].innerText
+      // Send data to background.js
+      chrome.runtime.sendMessage({ gettingpost: cleanedPost, gettingName });
+   }
 
-
-  const gettingName =  document.getElementsByClassName("update-components-actor__name")[0].getElementsByTagName("span")[0].getElementsByTagName("span")[0].innerText;
-
-  //  alert([gettingName , gettingpost])
-  // console.log(gettingpost)
-
-
-
-
-    chrome.runtime.sendMessage({gettingpost, gettingName})
-      
-     }
-
-})
+});
