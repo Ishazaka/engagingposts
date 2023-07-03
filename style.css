@@ -1,1 +1,19 @@
+body{
+    min-width: 300px;
+
+}
+
+.center{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+}
+.boxes{
+    text-align: center;
+    padding: 10px 0;
+}
+.boxes input{
+    margin-bottom: 5px; 
+}
 
