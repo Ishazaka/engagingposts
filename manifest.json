@@ -1,4 +1,3 @@
-
 {
 
     "name": "Engaging App",
@@ -10,14 +9,7 @@
         "default_title": "open the popup"
     },
 
-     
       "permissions" : [ "activeTab"  , "scripting"]
-         
-        
-    
-  
-
-
 
     
 }
