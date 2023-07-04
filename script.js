@@ -1,7 +1,6 @@
 
 let scrapeEmails = document.getElementById("scrapeEmails");
-let list =  document.getElementById("text-list")
-let namePerson =  document.getElementById("name-input")
+
 
 
 
